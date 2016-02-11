@@ -18,11 +18,12 @@
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) GraphTool *graphTool;
-@property (nonatomic, strong) Coordinate *currentCoordinate;
+@property (nonatomic, strong) Coordinate *currentPosition;
 @property (nonatomic, strong) UIColor *stateColor;
 @property (nonatomic, assign) CFTimeInterval startTime;
 @property (nonatomic, strong) CADisplayLink *displaylink;
 @property (nonatomic, strong) AVAudioPlayer *backgroundMusicPlayer;
+@property (nonatomic, assign) CGContextRef context;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureTool;
 @property (nonatomic, strong) UITapGestureRecognizer *buy;
@@ -45,11 +46,19 @@
 @property (nonatomic, strong) UILabel *secondInfoLabel;
 @property (nonatomic, strong) UILabel *thirdInfoLabel;
 
+
+@property (nonatomic, strong) UIImageView *buyPositionIndicator;
+@property (nonatomic, strong) UIImageView *shortPositionIndicator;
+@property (nonatomic, strong) UIImageView *point;
+
+
 @property (nonatomic, assign) int timeIndex;
 @property (nonatomic, assign) float currentPrice;
+@property (nonatomic, assign) float currentPriceCoordinate;
 @property (nonatomic, assign) float boughtPrice;
 @property (nonatomic, assign) float netGainLoss;
 @property (nonatomic, assign) float shortPrice;
+@property (nonatomic, assign) float shortPriceCoordinate;
 
 @property (nonatomic, assign) float maxNumberOfShares;
 @property (nonatomic, assign) float numberOfShares;
@@ -57,7 +66,7 @@
 @property (nonatomic, assign) float holdingValue;
 
 @property (nonatomic, assign) BOOL bought;
-@property (nonatomic, assign) BOOL shorted;
+@property (nonatomic, assign) BOOL shortingEnabled;
 
 @end
 
@@ -82,19 +91,6 @@ static const float kUITransitionTime= 1;
 
 - (void)loadContent {
     
-#pragma mark music
-    
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-        
-        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
-        NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
-        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
-        self.backgroundMusicPlayer.numberOfLoops = -1;
-        
-        [self.backgroundMusicPlayer prepareToPlay];
-        [self.backgroundMusicPlayer play];
-    });
-    
 #pragma mark graph
     self.view.backgroundColor = self.stateColor;
     self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 2500, 800)];
@@ -107,6 +103,19 @@ static const float kUITransitionTime= 1;
     self.holdingValue = self.numberOfShares * self.currentPrice;
     self.maxNumberOfShares = self.cash/self.currentPrice;
     
+#pragma mark indicators
+    self.shortingEnabled = NO;
+    
+#pragma mark music
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
+        NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
+        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
+        self.backgroundMusicPlayer.numberOfLoops = -1;
+        [self.backgroundMusicPlayer prepareToPlay];
+        [self.backgroundMusicPlayer play];
+    });
+    
 #pragma mark blocking
     self.pointBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 1, CGRectGetHeight(self.graphTool.frame))];
     self.pointBlock.backgroundColor = [UIColor blackColor];
@@ -115,15 +124,13 @@ static const float kUITransitionTime= 1;
     self.firstBlock = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
     self.firstBlock.backgroundColor = self.stateColor;
     
-    self.shortSellPremiumLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 1)];
-    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:0.0 green:1.0 blue:196.0/255.0 alpha:1.0];
-    
-    self.shortSellPremiumLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 1)];
-    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:0.0 green:1.0 blue:196.0/255.0 alpha:1.0];
-    [self.scrollView addSubview:self.shortSellPremiumLabel];
-    [UIView animateWithDuration:10 animations:^{
-        self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
-    }];
+    self.shortSellPremiumLabel = [[UILabel alloc]init];
+    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:88.0 green:0.0 blue:0.0/255.0 alpha:0.7];
+
+//    [self.scrollView addSubview:self.shortSellPremiumLabel];
+//    [UIView animateWithDuration:10 animations:^{
+//        self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
+//    }];
     
 #pragma mark label
     
@@ -216,7 +223,6 @@ static const float kUITransitionTime= 1;
     self.scrollView.userInteractionEnabled = YES;
     self.scrollView.bounces = NO;
     self.scrollView.clipsToBounds = YES;
-    //    [self.scrollView setZoomScale:1.5];
     [self.scrollView setMaximumZoomScale:4.0];
     [self.scrollView setMinimumZoomScale:1.0];
     
@@ -267,14 +273,22 @@ static const float kUITransitionTime= 1;
 #pragma mark update
 
 - (void)update {
+    UIImageView *point = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 1, 1)];
+    point.image = [UIImage imageNamed:@"points"];
+    [self.scrollView addSubview:point];
+    
+    
+    
     self.timeIndex = ((self.displaylink.timestamp - self.startTime)/0.1);
     if (self.displaylink.timestamp - self.startTime >= kTotalTime) {
         self.displaylink.paused = YES;
     }
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-        self.currentCoordinate = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
-        self.currentPrice = [(self.currentCoordinate.price)floatValue];
+        self.currentPosition = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
+        self.currentPrice = [(self.currentPosition.price)floatValue];
+        self.currentPriceCoordinate = [(self.currentPosition.priceCoordinate)floatValue];
     });
+    
     
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
@@ -293,14 +307,23 @@ static const float kUITransitionTime= 1;
     
     self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
     self.holdingsLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value * self.currentPrice];
-    self.moneyLabel.text = [NSString stringWithFormat:@"$0.20,000%0.2f", self.cash];
+    self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f", self.cash];
     
+    
+    if (self.shortingEnabled) {
+    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate, self.timeIndex, 1);
+    }
+
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+//    NSLog(@"PriceCoordinate: %f", self.currentPriceCoordinate);
 }
 
 - (void)buyAction:(UITapGestureRecognizer *)sender {
     self.boughtPrice = self.currentPrice;
     NSLog(@"%f, %d, %f, Bought At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
+    self.buyPositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 5, 5)];
+    self.buyPositionIndicator.image = [UIImage imageNamed:@"BuyPositionIndicator"];
+    [self.scrollView addSubview:self.buyPositionIndicator];
     
     
     self.buy.enabled = NO;
@@ -368,6 +391,8 @@ static const float kUITransitionTime= 1;
 }
 - (void)shortSellingActionInitiated:(UITapGestureRecognizer *)sender {
     self.shortPrice = self.currentPrice;
+    self.shortPriceCoordinate = self.currentPriceCoordinate;
+    self.shortingEnabled = YES;
     
     NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
     
@@ -387,6 +412,7 @@ static const float kUITransitionTime= 1;
 - (void)shortSell:(UITapGestureRecognizer *)sender {
     self.netGainLoss = (self.shortPrice - self.currentPrice);
     self.cash += self.netGainLoss * self.numberOfShares;
+    self.shortingEnabled = NO;
     
     self.initiateShortSelling.enabled = YES;
     
@@ -440,6 +466,28 @@ static const float kUITransitionTime= 1;
 {
     return YES;
 }
+
+- (void)drawRect:(CGRect)rect {
+    self.context = UIGraphicsGetCurrentContext();
+    CGContextBeginPath(self.context);
+    CGContextMoveToPoint(self.context, self.timeIndex, self.currentPrice);
+    
+    CGContextAddLineToPoint(self.context, self.timeIndex.x, self.currentPrice);
+    CGContextSetLineWidth(self.context, 11);
+    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
+    CGContextSetLineCap(self.context, kCGLineCapRound);
+    CGContextStrokePath(self.context);
+    
+    //    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect)+10, CGRectGetHeight(rect)+10);
+    //    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect)-10, CGRectGetHeight(rect)+10);
+    //    CGContextClosePath(self.context);
+    //    CGPathRef fillPath = CGContextCopyPath(self.context);
+    //    CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
+    //    CGContextFillPath(self.context);
+    //    CGContextAddPath(self.context, fillPath);
+    //    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
+}
+
 
 -(NSUInteger)supportedInterfaceOrientations
 {

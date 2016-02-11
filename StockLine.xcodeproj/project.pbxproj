@@ -24,6 +24,9 @@
 		0A55780A1C6C211200361B27 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A5578091C6C211200361B27 /* AudioToolbox.framework */; };
 		0A55780C1C6C211D00361B27 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A55780B1C6C211D00361B27 /* AVFoundation.framework */; };
 		0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D341C6AD29C00140263 /* ViewController.m */; };
+		0AF25CA91C6D317700D63A98 /* BuyPositionIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CA81C6D317700D63A98 /* BuyPositionIndicator.png */; };
+		0AF25CAB1C6D318800D63A98 /* ShortPositionIndicator copy.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */; };
+		0AF25CAD1C6D4E6800D63A98 /* Points.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CAC1C6D4E6800D63A98 /* Points.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +55,9 @@
 		0A5578091C6C211200361B27 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		0A55780B1C6C211D00361B27 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0A8F5D341C6AD29C00140263 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		0AF25CA81C6D317700D63A98 /* BuyPositionIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BuyPositionIndicator.png; sourceTree = "<group>"; };
+		0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ShortPositionIndicator copy.png"; sourceTree = "<group>"; };
+		0AF25CAC1C6D4E6800D63A98 /* Points.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Points.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +130,10 @@
 			children = (
 				0A5578071C6C209800361B27 /* GameMusic_Large.mp3 */,
 				0A5578001C6BED7200361B27 /* OpenSceen3.gif */,
+				0AF25CAC1C6D4E6800D63A98 /* Points.png */,
 				0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */,
+				0AF25CA81C6D317700D63A98 /* BuyPositionIndicator.png */,
+				0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -199,11 +208,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A5578031C6BED7200361B27 /* OpenSceen3.mp4 in Resources */,
+				0AF25CA91C6D317700D63A98 /* BuyPositionIndicator.png in Resources */,
 				0A18401E1C6929B400FDAF13 /* LaunchScreen.storyboard in Resources */,
+				0AF25CAD1C6D4E6800D63A98 /* Points.png in Resources */,
 				0A5578081C6C209900361B27 /* GameMusic_Large.mp3 in Resources */,
 				0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */,
 				0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */,
 				0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */,
+				0AF25CAB1C6D318800D63A98 /* ShortPositionIndicator copy.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

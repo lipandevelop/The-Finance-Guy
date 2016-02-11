@@ -10,10 +10,12 @@
 
 @implementation Coordinate
 
-- (instancetype)initWithPrice: (NSNumber *)price {
+- (instancetype)initWithPrice: (NSNumber *)price coordinate:(NSNumber *)coordinate {
     self = [super init];
     if (self) {
+        _priceCoordinate = coordinate;
         _price = price;
+        
     }
     return self;
 }

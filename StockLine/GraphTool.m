@@ -28,8 +28,7 @@ static const float kStockPriceRange = 100;
         self.stock = [[Stock alloc] initWithVolatility:10];
         self.stock.stockPrice = arc4random_uniform(kStockPriceRange) + kYOffset;
         self.startingPrice = self.stock.stockPrice;
-        _arrayOfCoordinates = [[NSMutableArray alloc]init];
-        
+        _arrayOfCoordinates = [[NSMutableArray alloc]init];        
     }
     return self;
 }
@@ -56,9 +55,11 @@ static const float kStockPriceRange = 100;
     //    CGContextFillPath(self.context);
     //    CGContextAddPath(self.context, fillPath);
     CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
+    CGContextSetStrokeColorWithColor(self.context, [UIColor blackColor].CGColor);
+
     //    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
     
-    CGContextSetLineWidth(self.context, 7);
+    CGContextSetLineWidth(self.context, 1);
     CGContextSetLineCap(self.context, kCGLineCapRound);
     CGContextStrokePath(self.context);
 }
@@ -86,7 +87,9 @@ static const float kStockPriceRange = 100;
         self.stock.timeVariable = x;
         CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
         float stockPriceOnGraph = (1000 - self.stock.stockPrice)/20;
-        [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(stockPriceOnGraph)]];
+        
+        [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(stockPriceOnGraph) coordinate:@(self.stock.stockPrice)]];
+    
         
 //        NSLog(@"$%0.2f, $%0.2f", self.stock.stockPrice, stockPriceOnGraph);
         

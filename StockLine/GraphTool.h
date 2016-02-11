@@ -12,6 +12,8 @@
 @interface GraphTool : UIView
 @property (nonatomic, assign) int startingPrice;
 @property (nonatomic, strong) NSMutableArray *arrayOfCoordinates;
+@property (nonatomic, strong) NSMutableArray *arrayOfPrices;
+
 
 
 @end

@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface Coordinate : NSObject
-@property (nonatomic, strong) NSNumber *time;
+@property (nonatomic, strong) NSNumber *priceCoordinate;
 @property (nonatomic, strong) NSNumber *price;
-- (instancetype)initWithPrice: (NSNumber *)price;
+- (instancetype)initWithPrice: (NSNumber *)price coordinate:(NSNumber *)coordinate;
 
 
 
