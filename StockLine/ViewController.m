@@ -103,7 +103,7 @@ static const float kPredictedPriceTime = 90;
     
 #pragma mark graph
     self.view.backgroundColor = self.stateColor;
-    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 2500, 800)];
+    self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 700, 800)];
     self.graphTool.backgroundColor = self.stateColor;
     self.scrollView.backgroundColor = self.stateColor;
     self.graphTool.userInteractionEnabled = YES;
@@ -151,13 +151,20 @@ static const float kPredictedPriceTime = 90;
     
     self.analysisButton = [[UIButton alloc]init];
     self.analysisButton.titleLabel.text = @"Stock Analysis";
-    self.analysisButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:50.0/255.0 blue:0.0/255.0 alpha:0.5];
+    self.analysisButton.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:120.0/255.0 blue:220.0/255.0 alpha:0.5];
     [self.analysisButton addTarget:self action:@selector(runAnalysis) forControlEvents:UIControlEventTouchUpInside];
+    
     self.analysisLabel = [[UILabel alloc]init];
-    self.analysisLabel.text = @"Run Analysis on Stock";
-    self.analysisLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:20];
+    self.analysisLabel.text = @"Predict For: $1k";
+    self.analysisLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
     self.analysisLabel.textAlignment = NSTextAlignmentRight;
-    self.analysisLabel.alpha = 0.8;
+    self.analysisLabel.textColor = [UIColor colorWithRed:20.0/255.0 green:60.0/255.0 blue:90.0/255.0 alpha:1.0];
+    
+    self.backLabel = [[UILabel alloc]init];
+    self.backLabel.text = @"Cash Out";
+    self.backLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
+    self.backLabel.textAlignment = NSTextAlignmentRight;
+    self.backLabel.alpha = 0.5;
     
     self.backButton = [[UIButton alloc]init];
     self.backButton.titleLabel.text = @"Back";
@@ -278,7 +285,9 @@ static const float kPredictedPriceTime = 90;
     [self.scrollView addSubview:self.thirdInfoLabel];
     [self.scrollView addSubview:self.shortSellPremiumLabel];
     [self.scrollView addSubview:self.analysisButton];
+    [self.scrollView addSubview:self.analysisLabel];
     [self.scrollView addSubview:self.backButton];
+    [self.scrollView addSubview:self.backLabel];
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -302,9 +311,10 @@ static const float kPredictedPriceTime = 90;
 #pragma mark update
 
 - (void)update {
-    UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate - 20, 15.0, 40.0)];
+    UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate - 25, 15.0, 50.0)];
+    point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.0];
     point.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:10.0/255.0 blue:0.0 alpha:0.0];
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:1.5 animations:^{
         point.frame = CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5);
         point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
 
@@ -330,14 +340,17 @@ static const float kPredictedPriceTime = 90;
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
     self.analysisButton.frame = CGRectMake(self.timeIndex -599, 489, 600, 20);
-    self.backButton.frame = CGRectMake(0, 632, 600, 20);
-    self.shareSlider.frame = CGRectMake(520, 400, 20, 200);
+    self.analysisLabel.frame = CGRectMake(self.timeIndex - 100, 98, 100, CGRectGetHeight(self.graphTool.frame));
 
+    self.backButton.frame = CGRectMake(self.timeIndex -599, 632, 600, 30);
+    self.backLabel.frame = CGRectMake(((self.timeIndex - 100) - (self.timeIndex * 0.20)), 248, 100, CGRectGetHeight(self.graphTool.frame));
+    
+    self.shareSlider.frame = CGRectMake(520, 400, 20, 200);
     
     self.stateLabel.frame = CGRectMake(self.timeIndex * 0.3, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
     self.infoTextLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
-    self.analysisLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
+    [self.scrollView bringSubviewToFront:self.analysisLabel];
     
     self.infoNumberLabel.frame = CGRectMake(self.timeIndex + 5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame));
     self.infoNumberLabel.text = [NSString stringWithFormat:@"%0.2f\n", self.currentPrice];
@@ -348,12 +361,12 @@ static const float kPredictedPriceTime = 90;
     self.moneyLabel.frame = CGRectMake(self.timeIndex, 202, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
     self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
-    self.holdingsLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value * self.currentPrice];
+    self.holdingsLabel.text = [NSString stringWithFormat:@"$%0.2f", self.shareSlider.value * self.currentPrice];
     self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f", self.cash];
     
     
     if (self.shortingEnabled) {
-    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/10.0));
+    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/20.0));
     }
 
 
