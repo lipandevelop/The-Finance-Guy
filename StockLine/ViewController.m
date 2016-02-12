@@ -31,6 +31,9 @@
 @property (nonatomic, strong) UISwipeGestureRecognizer *initiateShortSelling;
 @property (nonatomic, strong) UITapGestureRecognizer *shortSell;
 @property (nonatomic, strong) UISlider *shareSlider;
+@property (nonatomic, strong) UIButton *analysisButton;
+@property (nonatomic, strong) UIButton *backButton;
+
 
 @property (nonatomic, strong) UILabel *firstBlock;
 @property (nonatomic, strong) UILabel *pointBlock;
@@ -50,6 +53,9 @@
 @property (nonatomic, strong) UIImageView *buyPositionIndicator;
 @property (nonatomic, strong) UIImageView *shortPositionIndicator;
 @property (nonatomic, strong) UIImageView *point;
+@property (nonatomic, strong) UIImageView *predictedPricePositionIndicator;
+@property (nonatomic, strong) UILabel *analysisLabel;
+@property (nonatomic, strong) UILabel *backLabel;
 
 
 @property (nonatomic, assign) int startingPrice;
@@ -60,6 +66,7 @@
 @property (nonatomic, assign) float netGainLoss;
 @property (nonatomic, assign) float shortPrice;
 @property (nonatomic, assign) float shortPriceCoordinate;
+@property (nonatomic, assign) float predictedPriceCoordinate;
 
 @property (nonatomic, assign) float maxNumberOfShares;
 @property (nonatomic, assign) float numberOfShares;
@@ -73,8 +80,9 @@
 
 @implementation ViewController
 
-static const float kTotalTime = 49.7;
+static const float kTotalTime = 49.5;
 static const float kUITransitionTime= 1;
+static const float kPredictedPriceTime = 90;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -141,6 +149,21 @@ static const float kUITransitionTime= 1;
     self.stateLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:42];
     self.stateLabel.alpha = 0.2;
     
+    self.analysisButton = [[UIButton alloc]init];
+    self.analysisButton.titleLabel.text = @"Stock Analysis";
+    self.analysisButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:50.0/255.0 blue:0.0/255.0 alpha:0.5];
+    [self.analysisButton addTarget:self action:@selector(runAnalysis) forControlEvents:UIControlEventTouchUpInside];
+    self.analysisLabel = [[UILabel alloc]init];
+    self.analysisLabel.text = @"Run Analysis on Stock";
+    self.analysisLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:20];
+    self.analysisLabel.textAlignment = NSTextAlignmentRight;
+    self.analysisLabel.alpha = 0.8;
+    
+    self.backButton = [[UIButton alloc]init];
+    self.backButton.titleLabel.text = @"Back";
+    self.backButton.backgroundColor = [UIColor colorWithRed:110.0/255.0 green:25.0/255.0 blue:0.0/255.0 alpha:0.4];
+    [self.backButton addTarget:self action:@selector(endGame) forControlEvents:UIControlEventTouchUpInside];
+    
     self.shareLabel = [[UILabel alloc]init];
     self.shareLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:20];
     self.shareLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.30];
@@ -183,7 +206,7 @@ static const float kUITransitionTime= 1;
     self.thirdInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:140.0/255.0 alpha:0.6];
     //self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
     
-    self.shareSlider = [[UISlider alloc]initWithFrame:CGRectMake(520, 100, 50, 160)];
+    self.shareSlider = [[UISlider alloc]init];
     CGAffineTransform trans = CGAffineTransformMakeRotation(M_PI * 1.5);
     self.shareSlider.transform = trans;
     [self.shareSlider setUserInteractionEnabled:YES];
@@ -191,6 +214,7 @@ static const float kUITransitionTime= 1;
     [self.shareSlider setMinimumValue:1];
     [self.shareSlider addTarget:self action:@selector(adjustShares:) forControlEvents:UIControlEventTouchDragInside];
     self.shareSlider.value = 1000;
+    self.shareSlider.tintColor = [UIColor colorWithRed:0.7 green:0.0 blue:0.0 alpha:1.0];
     
 #pragma mark userActions
     
@@ -210,7 +234,8 @@ static const float kUITransitionTime= 1;
     [self.shortSell setNumberOfTapsRequired:2];
     self.shortSell.enabled = NO;
     
-    
+
+
 #pragma mark addingViews
     self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -252,6 +277,8 @@ static const float kUITransitionTime= 1;
     [self.scrollView addSubview:self.secondInfoLabel];
     [self.scrollView addSubview:self.thirdInfoLabel];
     [self.scrollView addSubview:self.shortSellPremiumLabel];
+    [self.scrollView addSubview:self.analysisButton];
+    [self.scrollView addSubview:self.backButton];
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -289,10 +316,17 @@ static const float kUITransitionTime= 1;
         self.currentPosition = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex];
         self.currentPrice = [(self.currentPosition.price)floatValue];
         self.currentPriceCoordinate = [(self.currentPosition.priceCoordinate)floatValue];
+        Coordinate *predicted = [self.graphTool.arrayOfCoordinates objectAtIndex:self.timeIndex + kPredictedPriceTime];
+        self.predictedPriceCoordinate = [(predicted.priceCoordinate)floatValue];
     });
     
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    
+    self.analysisButton.frame = CGRectMake(self.timeIndex - 599, 372, 600, 20);
+    self.backButton.frame = CGRectMake(self.timeIndex + 1, 352, 600, 20);
+    self.shareSlider.frame = CGRectMake(520, 400, 20, 200);
+
     
     self.stateLabel.frame = CGRectMake(self.timeIndex * 0.3, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
@@ -314,6 +348,7 @@ static const float kUITransitionTime= 1;
     if (self.shortingEnabled) {
     self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/10.0));
     }
+
 
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
 //    NSLog(@"PriceCoordinate: %f", self.currentPriceCoordinate);
@@ -482,6 +517,29 @@ static const float kUITransitionTime= 1;
     self.holdingsLabel.text = [NSString stringWithFormat:@"$%f", self.holdingValue];
     self.shareLabel.text = [NSString stringWithFormat:@"%f", self.numberOfShares];
 }
+
+- (void)endGame {
+    [self dismissViewControllerAnimated:YES completion:nil];
+    NSLog(@"Ended");
+}
+
+- (void)runAnalysis {
+    self.predictedPricePositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex + kPredictedPriceTime - 60, self.predictedPriceCoordinate -60, 120, 120)];
+    self.predictedPricePositionIndicator.contentMode = UIViewContentModeScaleAspectFit;
+    self.predictedPricePositionIndicator.image = [UIImage imageNamed:@"PredictedPriceIndicator"];
+    self.predictedPricePositionIndicator.alpha = 0.0;
+    [self.scrollView addSubview:self.predictedPricePositionIndicator];
+    [UIView animateWithDuration:2 animations:^{
+        self.predictedPricePositionIndicator.frame = CGRectMake(self.timeIndex + kPredictedPriceTime  - 10, self.predictedPriceCoordinate - arc4random_uniform(25), 20, 20);
+        self.predictedPricePositionIndicator.alpha = 0.7;
+    }];
+    [UIView animateWithDuration:6 animations:^{
+        self.predictedPricePositionIndicator.frame = CGRectMake(self.timeIndex + kPredictedPriceTime  - 10, self.predictedPriceCoordinate - arc4random_uniform(25), 20, 20);
+        self.predictedPricePositionIndicator.alpha = 0.0;
+    }];
+}
+
+
 
 -(BOOL)shouldAutorotate
 {

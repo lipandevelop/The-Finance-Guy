@@ -16,6 +16,7 @@
 @property (nonatomic, strong) AVPlayer *backGroundImagePlayer;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *quoteLabel;
+@property (nonatomic, strong) UILabel *fundsLabel;
 
 @end
 
@@ -50,7 +51,6 @@
     [UIView animateWithDuration:150 animations:^{
         self.titleLabel.frame = CGRectMake(-220, 70, 600, 100);
     }];
-
     self.quoteLabel = [[UILabel alloc]initWithFrame:CGRectMake(111, 89, 600, 100)];
     self.quoteLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
     self.quoteLabel.text = @"Be Greedy When Others Are Fearful";
@@ -98,8 +98,13 @@
     
 }
 - (void)presentGameController {
-    ViewController *viewController = [[ViewController alloc] init];
-    [self presentViewController:viewController animated:YES completion:nil];
+    ViewController *gameController = [[ViewController alloc] init];
+    [self presentViewController:gameController animated:YES completion:nil];
+    gameController.delegate = self;
+}
+
+- (void)textEntered:(NSString *)text {
+    self.fundsLabel.text = text;
 }
 
 -(BOOL)shouldAutorotate

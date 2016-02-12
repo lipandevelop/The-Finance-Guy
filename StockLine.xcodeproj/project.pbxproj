@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A176DE81C6E598C003C766B /* PredictedPriceIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */; };
 		0A18400D1C6929B400FDAF13 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400C1C6929B400FDAF13 /* main.m */; };
 		0A1840101C6929B400FDAF13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400F1C6929B400FDAF13 /* AppDelegate.m */; };
 		0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1840141C6929B400FDAF13 /* Main.storyboard */; };
@@ -26,11 +27,11 @@
 		0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D341C6AD29C00140263 /* ViewController.m */; };
 		0AF25CAB1C6D318800D63A98 /* ShortPositionIndicator copy.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */; };
 		0AF25CB21C6D77FE00D63A98 /* BuyPositionIndicator2.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CB11C6D77FE00D63A98 /* BuyPositionIndicator2.png */; };
-		0AF25CB41C6D7A5200D63A98 /* ShortSellIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CB31C6D7A5200D63A98 /* ShortSellIndicator.png */; };
 		0AF25CB61C6D7B2100D63A98 /* ShortSellIndicator2.png in Resources */ = {isa = PBXBuildFile; fileRef = 0AF25CB51C6D7B2100D63A98 /* ShortSellIndicator2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PredictedPriceIndicator.png; sourceTree = "<group>"; };
 		0A1840081C6929B400FDAF13 /* StockLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StockLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A18400C1C6929B400FDAF13 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0A18400E1C6929B400FDAF13 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -58,7 +59,6 @@
 		0A8F5D341C6AD29C00140263 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ShortPositionIndicator copy.png"; sourceTree = "<group>"; };
 		0AF25CB11C6D77FE00D63A98 /* BuyPositionIndicator2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BuyPositionIndicator2.png; sourceTree = "<group>"; };
-		0AF25CB31C6D7A5200D63A98 /* ShortSellIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ShortSellIndicator.png; sourceTree = "<group>"; };
 		0AF25CB51C6D7B2100D63A98 /* ShortSellIndicator2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ShortSellIndicator2.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,9 +133,9 @@
 				0A5578071C6C209800361B27 /* GameMusic_Large.mp3 */,
 				0AF25CB11C6D77FE00D63A98 /* BuyPositionIndicator2.png */,
 				0A5578001C6BED7200361B27 /* OpenSceen3.gif */,
+				0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */,
 				0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */,
 				0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */,
-				0AF25CB31C6D7A5200D63A98 /* ShortSellIndicator.png */,
 				0AF25CB51C6D7B2100D63A98 /* ShortSellIndicator2.png */,
 			);
 			name = Media;
@@ -216,10 +216,10 @@
 				0A5578081C6C209900361B27 /* GameMusic_Large.mp3 in Resources */,
 				0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */,
 				0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */,
+				0A176DE81C6E598C003C766B /* PredictedPriceIndicator.png in Resources */,
 				0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */,
 				0AF25CB61C6D7B2100D63A98 /* ShortSellIndicator2.png in Resources */,
 				0AF25CAB1C6D318800D63A98 /* ShortPositionIndicator copy.png in Resources */,
-				0AF25CB41C6D7A5200D63A98 /* ShortSellIndicator.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

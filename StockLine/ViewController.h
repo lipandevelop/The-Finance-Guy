@@ -7,8 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+@protocol FundsDelegate <NSObject>
+
+- (void)textEntered:(NSString *)text;
+
+@end
 
 @interface ViewController : UIViewController
+@property (weak, nonatomic) id <FundsDelegate> delegate;
 
 
 @end
