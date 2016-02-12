@@ -80,7 +80,7 @@
 
 @implementation ViewController
 
-static const float kTotalTime = 49.5;
+static const float kTotalTime = 50;
 static const float kUITransitionTime= 1;
 static const float kPredictedPriceTime = 90;
 
@@ -302,8 +302,14 @@ static const float kPredictedPriceTime = 90;
 #pragma mark update
 
 - (void)update {
-    UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5)];
-    point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
+    UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate - 20, 15.0, 40.0)];
+    point.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:10.0/255.0 blue:0.0 alpha:0.0];
+    [UIView animateWithDuration:0.5 animations:^{
+        point.frame = CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5);
+        point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
+
+    }];
+    
     [self.scrollView addSubview:point];
     
     [self.scrollView setNeedsDisplay];
@@ -323,14 +329,15 @@ static const float kPredictedPriceTime = 90;
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
-    self.analysisButton.frame = CGRectMake(self.timeIndex - 599, 372, 600, 20);
-    self.backButton.frame = CGRectMake(self.timeIndex + 1, 352, 600, 20);
+    self.analysisButton.frame = CGRectMake(self.timeIndex -599, 489, 600, 20);
+    self.backButton.frame = CGRectMake(0, 632, 600, 20);
     self.shareSlider.frame = CGRectMake(520, 400, 20, 200);
 
     
     self.stateLabel.frame = CGRectMake(self.timeIndex * 0.3, 30, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
     self.infoTextLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
+    self.analysisLabel.frame = CGRectMake(self.timeIndex - 100, 70, 100, CGRectGetHeight(self.graphTool.frame));
     
     self.infoNumberLabel.frame = CGRectMake(self.timeIndex + 5, 70, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.graphTool.frame));
     self.infoNumberLabel.text = [NSString stringWithFormat:@"%0.2f\n", self.currentPrice];
@@ -524,18 +531,32 @@ static const float kPredictedPriceTime = 90;
 }
 
 - (void)runAnalysis {
-    self.predictedPricePositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex + kPredictedPriceTime - 60, self.predictedPriceCoordinate -60, 120, 120)];
+    self.cash -= 1000;
+    self.predictedPricePositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex + kPredictedPriceTime - 120, self.predictedPriceCoordinate -120, 240, 240)];
     self.predictedPricePositionIndicator.contentMode = UIViewContentModeScaleAspectFit;
     self.predictedPricePositionIndicator.image = [UIImage imageNamed:@"PredictedPriceIndicator"];
     self.predictedPricePositionIndicator.alpha = 0.0;
     [self.scrollView addSubview:self.predictedPricePositionIndicator];
-    [UIView animateWithDuration:2 animations:^{
+    [UIView animateWithDuration:3 animations:^{
         self.predictedPricePositionIndicator.frame = CGRectMake(self.timeIndex + kPredictedPriceTime  - 10, self.predictedPriceCoordinate - arc4random_uniform(25), 20, 20);
-        self.predictedPricePositionIndicator.alpha = 0.7;
+        self.predictedPricePositionIndicator.alpha = 0.3;
     }];
     [UIView animateWithDuration:6 animations:^{
         self.predictedPricePositionIndicator.frame = CGRectMake(self.timeIndex + kPredictedPriceTime  - 10, self.predictedPriceCoordinate - arc4random_uniform(25), 20, 20);
         self.predictedPricePositionIndicator.alpha = 0.0;
+    }];
+    
+    self.thirdInfoLabel.frame = CGRectMake(330, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.thirdInfoLabel.text = @"Analysis cost: -$1000";
+    
+    [UIView animateWithDuration:4.5 animations:^{
+        self.thirdInfoLabel.frame = CGRectMake(320, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+        self.thirdInfoLabel.alpha = 1;
+        
+        [UIView animateWithDuration:2 animations:^{
+            self.thirdInfoLabel.frame = CGRectMake(570, 120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+            self.thirdInfoLabel.alpha = 0.0;
+        }];
     }];
 }
 

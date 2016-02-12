@@ -20,6 +20,7 @@
 @implementation GraphTool
 static const float kYOffset = 500;
 static const float kStockPriceRange = 100;
+static const float kPricePoints = 2500;
 
 
 - (instancetype)initWithFrame:(CGRect)frame{
@@ -64,7 +65,7 @@ static const float kStockPriceRange = 100;
 }
 
 - (void)simulateStock {
-    for (int x; x < 2500; x += 5) {
+    for (int x; x < 3000; x += 5) {
         int f = arc4random_uniform(99);
         float distribution = (float) f;
         
