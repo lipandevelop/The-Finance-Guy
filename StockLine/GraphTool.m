@@ -25,7 +25,7 @@ static const float kStockPriceRange = 100;
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        self.stock = [[Stock alloc] initWithVolatility:10];
+        self.stock = [[Stock alloc] initWithVolatility:6];
         self.stock.stockPrice = arc4random_uniform(kStockPriceRange) + kYOffset;
         self.startingPrice = self.stock.stockPrice;
         _arrayOfCoordinates = [[NSMutableArray alloc]init];        
@@ -46,20 +46,19 @@ static const float kStockPriceRange = 100;
     NSLog(@"Distribution: 1sd%d, 2sd%d", self.stock.distribution1sd, self.stock.distribution2sd);
     [self simulateStock];
     
-    //    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect), CGRectGetHeight(rect));
-    //    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect), CGRectGetHeight(rect));
-    //    CGContextClosePath(self.context);
-    //    CGPathRef fillPath = CGContextCopyPath(self.context);
+        CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect), CGRectGetHeight(rect));
+        CGContextAddLineToPoint(self.context, CGRectGetMinX(rect), CGRectGetHeight(rect));
+        CGContextClosePath(self.context);
+        CGPathRef fillPath = CGContextCopyPath(self.context);
     
-    //CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
-    //    CGContextFillPath(self.context);
-    //    CGContextAddPath(self.context, fillPath);
-    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
-    CGContextSetStrokeColorWithColor(self.context, [UIColor blackColor].CGColor);
+    CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:225.0/255.0 green:90.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
+        CGContextFillPath(self.context);
+        CGContextAddPath(self.context, fillPath);
+    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:90.0/255.0 blue:0.0/255.0 alpha:0.4].CGColor);
 
     //    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
     
-    CGContextSetLineWidth(self.context, 1);
+    CGContextSetLineWidth(self.context, self.stock.standardDeviation * 5);
     CGContextSetLineCap(self.context, kCGLineCapRound);
     CGContextStrokePath(self.context);
 }
@@ -85,10 +84,10 @@ static const float kStockPriceRange = 100;
             }
         }
         self.stock.timeVariable = x;
-        CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
         float stockPriceOnGraph = (1000 - self.stock.stockPrice)/20;
-        
         [self.arrayOfCoordinates addObject:[[Coordinate alloc] initWithPrice:@(stockPriceOnGraph) coordinate:@(self.stock.stockPrice)]];
+        CGContextAddLineToPoint(self.context, self.stock.timeVariable, self.stock.stockPrice);
+        
     
         
 //        NSLog(@"$%0.2f, $%0.2f", self.stock.stockPrice, stockPriceOnGraph);

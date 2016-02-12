@@ -33,7 +33,7 @@ const int kNORMAL_DISTRIBUTION_2SD = 95;
         float companyStatePositive = (0 + arc4random() % (10))/100.0;
         _companyState = arc4random_uniform(2) == 1 ? 0 + companyStatePositive : 0 - companyStatePositive;
         _skewness = 5 - arc4random() % (2);
-        _standardDeviation = (1 + arc4random() % (20))/50.0 * self.volatility;
+        _standardDeviation = (5 + arc4random() % (20))/50.0 * self.volatility;
         _value = self.companyState * self.standardDeviation;
     }
     return self;

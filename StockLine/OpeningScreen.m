@@ -53,7 +53,7 @@
 
     self.quoteLabel = [[UILabel alloc]initWithFrame:CGRectMake(111, 89, 600, 100)];
     self.quoteLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
-    self.quoteLabel.text = @"Be Greedy When Other's Are Fearful";
+    self.quoteLabel.text = @"Be Greedy When Others Are Fearful";
     self.quoteLabel.textAlignment = NSTextAlignmentCenter;
     self.quoteLabel.alpha = 0.55;
     [UIView animateWithDuration:40 animations:^{

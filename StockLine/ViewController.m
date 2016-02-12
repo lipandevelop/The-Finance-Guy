@@ -23,7 +23,7 @@
 @property (nonatomic, assign) CFTimeInterval startTime;
 @property (nonatomic, strong) CADisplayLink *displaylink;
 @property (nonatomic, strong) AVAudioPlayer *backgroundMusicPlayer;
-@property (nonatomic, assign) CGContextRef context;
+
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGestureTool;
 @property (nonatomic, strong) UITapGestureRecognizer *buy;
@@ -52,6 +52,7 @@
 @property (nonatomic, strong) UIImageView *point;
 
 
+@property (nonatomic, assign) int startingPrice;
 @property (nonatomic, assign) int timeIndex;
 @property (nonatomic, assign) float currentPrice;
 @property (nonatomic, assign) float currentPriceCoordinate;
@@ -81,6 +82,7 @@ static const float kUITransitionTime= 1;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
 #pragma mark time
     //    NSLog(@"%f", self.startTime);
     self.displaylink = [CADisplayLink displayLinkWithTarget:self selector:@selector(update)];
@@ -125,7 +127,7 @@ static const float kUITransitionTime= 1;
     self.firstBlock.backgroundColor = self.stateColor;
     
     self.shortSellPremiumLabel = [[UILabel alloc]init];
-    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:88.0 green:0.0 blue:0.0/255.0 alpha:0.7];
+    self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:146.0 green:230.0 blue:0.0/255.0 alpha:0.6];
 
 //    [self.scrollView addSubview:self.shortSellPremiumLabel];
 //    [UIView animateWithDuration:10 animations:^{
@@ -273,11 +275,11 @@ static const float kUITransitionTime= 1;
 #pragma mark update
 
 - (void)update {
-    UIImageView *point = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 1, 1)];
-    point.image = [UIImage imageNamed:@"points"];
+    UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5)];
+    point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
     [self.scrollView addSubview:point];
     
-    
+    [self.scrollView setNeedsDisplay];
     
     self.timeIndex = ((self.displaylink.timestamp - self.startTime)/0.1);
     if (self.displaylink.timestamp - self.startTime >= kTotalTime) {
@@ -288,7 +290,6 @@ static const float kUITransitionTime= 1;
         self.currentPrice = [(self.currentPosition.price)floatValue];
         self.currentPriceCoordinate = [(self.currentPosition.priceCoordinate)floatValue];
     });
-    
     
     self.pointBlock.frame = CGRectMake(self.timeIndex, 0, 1, CGRectGetHeight(self.graphTool.frame));
     self.firstBlock.frame = CGRectMake(self.timeIndex, 0, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
@@ -311,7 +312,7 @@ static const float kUITransitionTime= 1;
     
     
     if (self.shortingEnabled) {
-    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate, self.timeIndex, 1);
+    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/10.0));
     }
 
     //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
@@ -321,11 +322,21 @@ static const float kUITransitionTime= 1;
 - (void)buyAction:(UITapGestureRecognizer *)sender {
     self.boughtPrice = self.currentPrice;
     NSLog(@"%f, %d, %f, Bought At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
-    self.buyPositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate, 5, 5)];
-    self.buyPositionIndicator.image = [UIImage imageNamed:@"BuyPositionIndicator"];
+    self.buyPositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex-5, self.currentPriceCoordinate-5, 10, 10)];
+    self.buyPositionIndicator.contentMode = UIViewContentModeScaleAspectFit;
+    self.buyPositionIndicator.image = [UIImage imageNamed:@"BuyPositionIndicator2"];
+    self.buyPositionIndicator.alpha = 0.6;
     [self.scrollView addSubview:self.buyPositionIndicator];
-    
-    
+    [self.scrollView bringSubviewToFront:self.buyPositionIndicator];
+    UIImageView *buyPositionAnimationView = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex-6.5, self.currentPriceCoordinate-6.5, 13, 13)];
+    buyPositionAnimationView.image = [UIImage imageNamed:@"BuyPositionIndicator2"];
+    buyPositionAnimationView.alpha = 0.5;
+    [self.scrollView addSubview:buyPositionAnimationView];
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        buyPositionAnimationView.frame = CGRectMake(self.timeIndex-25, self.currentPriceCoordinate-25, 50, 50);
+        buyPositionAnimationView.alpha = 0.0;
+    }];
+
     self.buy.enabled = NO;
     self.sell.enabled = YES;
     self.stateLabel.text = [NSString stringWithFormat:@"BOUGHT@$%0.2f",self.boughtPrice];
@@ -337,10 +348,6 @@ static const float kUITransitionTime= 1;
         self.holdingsLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:229.0/255.0 blue:54.0/255.0 alpha:0.55];
         
     }];
-    //    self.infoLabel.text = [NSString stringWithFormat:@"Bought at Time%f\nPrice: $0.2%f", CACurrentMediaTime() - self.startTime, self.currentPrice];
-    //    self.infoLabel.alpha = 0.3;
-    //    [UIView animateWithDuration:kUITransitionTime animations:^{
-    //        self.infoLabel.alpha = 1.0;
     
 }
 - (void)sellAction:(UITapGestureRecognizer *)sender {
@@ -393,6 +400,20 @@ static const float kUITransitionTime= 1;
     self.shortPrice = self.currentPrice;
     self.shortPriceCoordinate = self.currentPriceCoordinate;
     self.shortingEnabled = YES;
+    
+    self.shortPositionIndicator = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex-5, self.currentPriceCoordinate-5, 10, 10)];
+    self.shortPositionIndicator.contentMode = UIViewContentModeScaleAspectFit;
+    self.shortPositionIndicator.image = [UIImage imageNamed:@"ShortSellIndicator2"];
+    self.shortPositionIndicator.alpha = 0.6;
+    [self.scrollView addSubview:self.shortPositionIndicator];
+    UIImageView *shortPositionAnimationView = [[UIImageView alloc]initWithFrame:CGRectMake(self.timeIndex-6.5, self.currentPriceCoordinate-6.5, 13, 13)];
+    shortPositionAnimationView.image = [UIImage imageNamed:@"ShortSellIndicator2"];
+    shortPositionAnimationView.alpha = 0.5;
+    [self.scrollView addSubview:shortPositionAnimationView];
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        shortPositionAnimationView.frame = CGRectMake(self.timeIndex-25, self.currentPriceCoordinate-25, 50, 50);
+        shortPositionAnimationView.alpha = 0.0;
+    }];
     
     NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
     
@@ -466,29 +487,6 @@ static const float kUITransitionTime= 1;
 {
     return YES;
 }
-
-- (void)drawRect:(CGRect)rect {
-    self.context = UIGraphicsGetCurrentContext();
-    CGContextBeginPath(self.context);
-    CGContextMoveToPoint(self.context, self.timeIndex, self.currentPrice);
-    
-    CGContextAddLineToPoint(self.context, self.timeIndex.x, self.currentPrice);
-    CGContextSetLineWidth(self.context, 11);
-    CGContextSetStrokeColorWithColor(self.context, [UIColor colorWithRed:255.0/255.0 green:94.0/255.0 blue:0.0/255.0 alpha:1.0].CGColor);
-    CGContextSetLineCap(self.context, kCGLineCapRound);
-    CGContextStrokePath(self.context);
-    
-    //    CGContextAddLineToPoint(self.context, CGRectGetMaxX(rect)+10, CGRectGetHeight(rect)+10);
-    //    CGContextAddLineToPoint(self.context, CGRectGetMinX(rect)-10, CGRectGetHeight(rect)+10);
-    //    CGContextClosePath(self.context);
-    //    CGPathRef fillPath = CGContextCopyPath(self.context);
-    //    CGContextSetFillColorWithColor(self.context, [UIColor colorWithRed:29.0/255.0 green:82.0/255.0 blue:174.0/255.0 alpha:0.8].CGColor);
-    //    CGContextFillPath(self.context);
-    //    CGContextAddPath(self.context, fillPath);
-    //    CGContextSetLineWidth(self.context, 5 * self.stock.standardDeviation);
-}
-
-
 -(NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscape;
