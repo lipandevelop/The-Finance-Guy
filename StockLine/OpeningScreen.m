@@ -11,12 +11,13 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "ViewController.h"
 
-@interface OpeningScreen () <UIScrollViewDelegate, AVAudioPlayerDelegate>
+@interface OpeningScreen () <UIScrollViewDelegate, AVAudioPlayerDelegate, FundsDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) AVPlayer *backGroundImagePlayer;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *quoteLabel;
 @property (nonatomic, strong) UILabel *fundsLabel;
+@property (nonatomic, assign) float fundsAvailable;
 
 @end
 
@@ -28,6 +29,7 @@
 }
 
 - (void) loadContent {
+    self.fundsAvailable = 100000;
     
     self.view.backgroundColor = [UIColor blackColor];
     //    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 120, CGRectGetWidth(self.view.frame), 500)];
@@ -55,12 +57,21 @@
     self.quoteLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
     self.quoteLabel.text = @"Be Greedy When Others Are Fearful";
     self.quoteLabel.textAlignment = NSTextAlignmentCenter;
-    self.quoteLabel.alpha = 0.55;
+    self.quoteLabel.alpha = 0.15;
     [UIView animateWithDuration:40 animations:^{
         self.quoteLabel.frame = CGRectMake(150, 89, 600, 100);
         self.quoteLabel.alpha = 0.15;
     }];
-
+    self.fundsLabel = [[UILabel alloc]initWithFrame:CGRectMake(89, 100, 600, 100)];
+    self.fundsLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
+    self.fundsLabel.text = [NSString stringWithFormat:@"Funds Available: $%0.2f", self.fundsAvailable];
+    self.fundsLabel.textAlignment = NSTextAlignmentCenter;
+    self.fundsLabel.alpha = 0.25;
+    [UIView animateWithDuration:70 animations:^{
+        self.fundsLabel.frame = CGRectMake(-110, 105, 600, 100);
+        self.fundsLabel.alpha = 0.10;
+    }];
+    
 //    NSString *backGroundImagePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"mp4"];
 //    NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundImagePath];
 //    self.backGroundImagePlayer = [[AVPlayer alloc]initWithURL:backGroundMusicURL];
@@ -83,6 +94,7 @@
     self.scrollView.bounces = NO;
     [self.scrollView addSubview:self.titleLabel];
     [self.scrollView addSubview:self.quoteLabel];
+    [self.scrollView addSubview:self.fundsLabel];
     [self.view addSubview:playBtn];
     [self.view bringSubviewToFront:playBtn];
     
@@ -103,9 +115,11 @@
     gameController.delegate = self;
 }
 
-- (void)textEntered:(NSString *)text {
-    self.fundsLabel.text = text;
+- (void)storeCash:(float)cash {
+    self.fundsAvailable += cash;
+    self.fundsLabel.text = [NSString stringWithFormat:@"Funds Available: $%0.2f", self.fundsAvailable];
 }
+
 
 -(BOOL)shouldAutorotate
 {

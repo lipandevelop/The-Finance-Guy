@@ -30,6 +30,7 @@
 @property (nonatomic, strong) UITapGestureRecognizer *sell;
 @property (nonatomic, strong) UISwipeGestureRecognizer *initiateShortSelling;
 @property (nonatomic, strong) UITapGestureRecognizer *shortSell;
+@property (nonatomic, strong) UILongPressGestureRecognizer *initiateForward;
 @property (nonatomic, strong) UISlider *shareSlider;
 @property (nonatomic, strong) UIButton *analysisButton;
 @property (nonatomic, strong) UIButton *backButton;
@@ -186,7 +187,7 @@ static const float kPredictedPriceTime = 90;
     
     self.infoTextLabel = [[UILabel alloc]init];
     self.infoTextLabel.text = @"Current Price $\nVolitility";
-    self.infoTextLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:14];
+    self.infoTextLabel.font = [UIFont fontWithName:(@"AvenirNext-Regular") size:12];
     self.infoTextLabel.numberOfLines = 0;
     self.infoTextLabel.alpha = 0.25;
     self.infoTextLabel.textAlignment = NSTextAlignmentRight;
@@ -343,7 +344,7 @@ static const float kPredictedPriceTime = 90;
     self.analysisLabel.frame = CGRectMake(self.timeIndex - 100, 98, 100, CGRectGetHeight(self.graphTool.frame));
 
     self.backButton.frame = CGRectMake(self.timeIndex -599, 632, 600, 30);
-    self.backLabel.frame = CGRectMake(((self.timeIndex - 100) - (self.timeIndex * 0.20)), 248, 100, CGRectGetHeight(self.graphTool.frame));
+    self.backLabel.frame = CGRectMake(((self.timeIndex - 100) - (self.timeIndex * 0.50)), 248, 100, CGRectGetHeight(self.graphTool.frame));
     
     self.shareSlider.frame = CGRectMake(520, 400, 20, 200);
     
@@ -449,7 +450,7 @@ static const float kPredictedPriceTime = 90;
     
     self.sell.enabled = NO;
     self.buy.enabled = YES;
-    
+
 }
 - (void)shortSellingActionInitiated:(UITapGestureRecognizer *)sender {
     self.shortPrice = self.currentPrice;
@@ -539,6 +540,7 @@ static const float kPredictedPriceTime = 90;
 }
 
 - (void)endGame {
+    [self.delegate storeCash:self.cash];
     [self dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"Ended");
 }
@@ -573,8 +575,6 @@ static const float kPredictedPriceTime = 90;
     }];
 }
 
-
-
 -(BOOL)shouldAutorotate
 {
     return YES;
@@ -601,4 +601,3 @@ static const float kPredictedPriceTime = 90;
 //}
 
 @end
-
