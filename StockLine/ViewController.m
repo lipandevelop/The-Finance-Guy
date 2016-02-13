@@ -119,7 +119,7 @@ static const float kPredictedPriceTime = 90;
     
 #pragma mark music
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"GameMusic_Large" ofType:@"mp3"];
+        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"Movement" ofType:@"mp3"];
         NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
         self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
         self.backgroundMusicPlayer.numberOfLoops = -1;
@@ -152,20 +152,21 @@ static const float kPredictedPriceTime = 90;
     
     self.analysisButton = [[UIButton alloc]init];
     self.analysisButton.titleLabel.text = @"Stock Analysis";
-    self.analysisButton.backgroundColor = [UIColor colorWithRed:0.0/255.0 green:120.0/255.0 blue:220.0/255.0 alpha:0.5];
+    self.analysisButton.backgroundColor = [UIColor colorWithRed:13.0/255.0 green:40.0/255.0 blue:63.0/255.0 alpha:0.5];
     [self.analysisButton addTarget:self action:@selector(runAnalysis) forControlEvents:UIControlEventTouchUpInside];
     
     self.analysisLabel = [[UILabel alloc]init];
     self.analysisLabel.text = @"Predict For: $1k";
     self.analysisLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
     self.analysisLabel.textAlignment = NSTextAlignmentRight;
-    self.analysisLabel.textColor = [UIColor colorWithRed:20.0/255.0 green:60.0/255.0 blue:90.0/255.0 alpha:1.0];
+    self.analysisLabel.textColor = [UIColor whiteColor];
+    self.analysisLabel.alpha = 0.5;
     
     self.backLabel = [[UILabel alloc]init];
     self.backLabel.text = @"Cash Out";
-    self.backLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
+    self.backLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:16];
     self.backLabel.textAlignment = NSTextAlignmentRight;
-    self.backLabel.alpha = 0.5;
+    self.backLabel.alpha = 0.4;
     
     self.backButton = [[UIButton alloc]init];
     self.backButton.titleLabel.text = @"Back";
@@ -410,7 +411,7 @@ static const float kPredictedPriceTime = 90;
     self.netGainLoss =  -(self.boughtPrice - self.currentPrice);
     self.cash += self.netGainLoss * self.numberOfShares;
     
-    NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
+//    NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
     
     self.stateLabel.text = [NSString stringWithFormat:@"WATCHING"];
     self.stateLabel.alpha = 0;
@@ -471,7 +472,7 @@ static const float kPredictedPriceTime = 90;
         shortPositionAnimationView.alpha = 0.0;
     }];
     
-    NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
+//    NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
     
     self.initiateShortSelling.enabled = NO;
     self.shortSell.enabled = YES;
@@ -534,15 +535,18 @@ static const float kPredictedPriceTime = 90;
     
 }
 - (void)adjustShares: (UISlider *)sliderValue {
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
     sliderValue.value = self.numberOfShares;
     self.holdingsLabel.text = [NSString stringWithFormat:@"$%f", self.holdingValue];
     self.shareLabel.text = [NSString stringWithFormat:@"%f", self.numberOfShares];
+    });
 }
 
 - (void)endGame {
     [self.delegate storeCash:self.cash];
     [self dismissViewControllerAnimated:YES completion:nil];
-    NSLog(@"Ended");
+    [self.backgroundMusicPlayer pause];
+//    NSLog(@"Ended");
 }
 
 - (void)runAnalysis {

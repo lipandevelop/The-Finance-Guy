@@ -13,7 +13,7 @@
 
 @interface OpeningScreen () <UIScrollViewDelegate, AVAudioPlayerDelegate, FundsDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) AVPlayer *backGroundImagePlayer;
+@property (nonatomic, strong) AVAudioPlayer *backgroundMusicPlayer;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *quoteLabel;
 @property (nonatomic, strong) UILabel *fundsLabel;
@@ -28,8 +28,19 @@
     [self loadContent];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+        NSString *backGroundMusicPath = [[NSBundle mainBundle] pathForResource:@"MovementMelo" ofType:@"mp3"];
+        NSURL *backGroundMusicURL = [NSURL fileURLWithPath:backGroundMusicPath];
+        self.backgroundMusicPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:backGroundMusicURL error:nil];
+        self.backgroundMusicPlayer.numberOfLoops = -1;
+        [self.backgroundMusicPlayer prepareToPlay];
+        [self.backgroundMusicPlayer play];
+}
+
 - (void) loadContent {
     self.fundsAvailable = 100000;
+    
+
     
     self.view.backgroundColor = [UIColor blackColor];
     //    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 120, CGRectGetWidth(self.view.frame), 500)];
@@ -45,13 +56,13 @@
     webViewBG.userInteractionEnabled = NO;
     webViewBG.translatesAutoresizingMaskIntoConstraints = NO;
     
-    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(71, 70, 600, 100)];
+    self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(81, 70, 600, 100)];
     self.titleLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:32];
     self.titleLabel.text = @"THE FINANCE GUY";
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.alpha = 0.25;
-    [UIView animateWithDuration:150 animations:^{
-        self.titleLabel.frame = CGRectMake(-220, 70, 600, 100);
+    [UIView animateWithDuration:40 animations:^{
+        self.titleLabel.frame = CGRectMake(50, 70, 600, 100);
     }];
     self.quoteLabel = [[UILabel alloc]initWithFrame:CGRectMake(111, 89, 600, 100)];
     self.quoteLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Medium") size:12];
@@ -68,8 +79,8 @@
     self.fundsLabel.textAlignment = NSTextAlignmentCenter;
     self.fundsLabel.alpha = 0.25;
     [UIView animateWithDuration:70 animations:^{
-        self.fundsLabel.frame = CGRectMake(-110, 105, 600, 100);
-        self.fundsLabel.alpha = 0.10;
+        self.fundsLabel.frame = CGRectMake(50, 105, 600, 100);
+        self.fundsLabel.alpha = 0.35;
     }];
     
 //    NSString *backGroundImagePath = [[NSBundle mainBundle] pathForResource:@"OpenSceen3" ofType:@"mp4"];
@@ -113,6 +124,7 @@
     ViewController *gameController = [[ViewController alloc] init];
     [self presentViewController:gameController animated:YES completion:nil];
     gameController.delegate = self;
+    [self.backgroundMusicPlayer pause];
 }
 
 - (void)storeCash:(float)cash {

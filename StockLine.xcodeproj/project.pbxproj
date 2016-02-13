@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0A176DE81C6E598C003C766B /* PredictedPriceIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */; };
+		0A176DF61C6F106B003C766B /* MovementMelo.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A176DF51C6F106B003C766B /* MovementMelo.mp3 */; };
+		0A176DF81C6F10E2003C766B /* Movement.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A176DF71C6F10E2003C766B /* Movement.mp3 */; };
 		0A18400D1C6929B400FDAF13 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400C1C6929B400FDAF13 /* main.m */; };
 		0A1840101C6929B400FDAF13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A18400F1C6929B400FDAF13 /* AppDelegate.m */; };
 		0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A1840141C6929B400FDAF13 /* Main.storyboard */; };
@@ -19,9 +21,7 @@
 		0A1840391C696C3300FDAF13 /* Coordinate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840381C696C3300FDAF13 /* Coordinate.m */; };
 		0A18403B1C69A71900FDAF13 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A18403A1C69A71900FDAF13 /* QuartzCore.framework */; };
 		0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578001C6BED7200361B27 /* OpenSceen3.gif */; };
-		0A5578031C6BED7200361B27 /* OpenSceen3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */; };
 		0A5578061C6BEDAE00361B27 /* OpeningScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A5578051C6BEDAE00361B27 /* OpeningScreen.m */; };
-		0A5578081C6C209900361B27 /* GameMusic_Large.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578071C6C209800361B27 /* GameMusic_Large.mp3 */; };
 		0A55780A1C6C211200361B27 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A5578091C6C211200361B27 /* AudioToolbox.framework */; };
 		0A55780C1C6C211D00361B27 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A55780B1C6C211D00361B27 /* AVFoundation.framework */; };
 		0A8F5D351C6AD29C00140263 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F5D341C6AD29C00140263 /* ViewController.m */; };
@@ -32,6 +32,8 @@
 
 /* Begin PBXFileReference section */
 		0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PredictedPriceIndicator.png; sourceTree = "<group>"; };
+		0A176DF51C6F106B003C766B /* MovementMelo.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = MovementMelo.mp3; sourceTree = "<group>"; };
+		0A176DF71C6F10E2003C766B /* Movement.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Movement.mp3; sourceTree = "<group>"; };
 		0A1840081C6929B400FDAF13 /* StockLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StockLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A18400C1C6929B400FDAF13 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		0A18400E1C6929B400FDAF13 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -50,10 +52,8 @@
 		0A1840381C696C3300FDAF13 /* Coordinate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coordinate.m; sourceTree = "<group>"; };
 		0A18403A1C69A71900FDAF13 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0A5578001C6BED7200361B27 /* OpenSceen3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = OpenSceen3.gif; sourceTree = "<group>"; };
-		0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = OpenSceen3.mp4; sourceTree = "<group>"; };
 		0A5578041C6BEDAE00361B27 /* OpeningScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpeningScreen.h; sourceTree = "<group>"; };
 		0A5578051C6BEDAE00361B27 /* OpeningScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpeningScreen.m; sourceTree = "<group>"; };
-		0A5578071C6C209800361B27 /* GameMusic_Large.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = GameMusic_Large.mp3; sourceTree = "<group>"; };
 		0A5578091C6C211200361B27 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		0A55780B1C6C211D00361B27 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		0A8F5D341C6AD29C00140263 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
@@ -130,11 +130,11 @@
 		0A5577FF1C6BED1000361B27 /* Media */ = {
 			isa = PBXGroup;
 			children = (
-				0A5578071C6C209800361B27 /* GameMusic_Large.mp3 */,
+				0A176DF71C6F10E2003C766B /* Movement.mp3 */,
+				0A176DF51C6F106B003C766B /* MovementMelo.mp3 */,
 				0AF25CB11C6D77FE00D63A98 /* BuyPositionIndicator2.png */,
 				0A5578001C6BED7200361B27 /* OpenSceen3.gif */,
 				0A176DE71C6E598C003C766B /* PredictedPriceIndicator.png */,
-				0A5578011C6BED7200361B27 /* OpenSceen3.mp4 */,
 				0AF25CAA1C6D318800D63A98 /* ShortPositionIndicator copy.png */,
 				0AF25CB51C6D7B2100D63A98 /* ShortSellIndicator2.png */,
 			);
@@ -210,10 +210,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A5578031C6BED7200361B27 /* OpenSceen3.mp4 in Resources */,
 				0A18401E1C6929B400FDAF13 /* LaunchScreen.storyboard in Resources */,
+				0A176DF81C6F10E2003C766B /* Movement.mp3 in Resources */,
+				0A176DF61C6F106B003C766B /* MovementMelo.mp3 in Resources */,
 				0AF25CB21C6D77FE00D63A98 /* BuyPositionIndicator2.png in Resources */,
-				0A5578081C6C209900361B27 /* GameMusic_Large.mp3 in Resources */,
 				0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */,
 				0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */,
 				0A176DE81C6E598C003C766B /* PredictedPriceIndicator.png in Resources */,
