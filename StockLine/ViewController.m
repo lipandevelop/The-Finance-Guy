@@ -32,8 +32,11 @@
 @property (nonatomic, strong) UITapGestureRecognizer *shortSell;
 @property (nonatomic, strong) UILongPressGestureRecognizer *initiateForward;
 @property (nonatomic, strong) UISlider *shareSlider;
+
 @property (nonatomic, strong) UIButton *analysisButton;
 @property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) UILabel *analysisLabel;
+@property (nonatomic, strong) UILabel *backLabel;
 
 
 @property (nonatomic, strong) UILabel *firstBlock;
@@ -49,14 +52,15 @@
 @property (nonatomic, strong) UILabel *firstInfoLabel;
 @property (nonatomic, strong) UILabel *secondInfoLabel;
 @property (nonatomic, strong) UILabel *thirdInfoLabel;
+@property (nonatomic, strong) UILabel *derivativesDetail;
 
 
 @property (nonatomic, strong) UIImageView *buyPositionIndicator;
 @property (nonatomic, strong) UIImageView *shortPositionIndicator;
 @property (nonatomic, strong) UIImageView *point;
 @property (nonatomic, strong) UIImageView *predictedPricePositionIndicator;
-@property (nonatomic, strong) UILabel *analysisLabel;
-@property (nonatomic, strong) UILabel *backLabel;
+@property (nonatomic, strong) UIImageView *forwardPositionIndicator;
+
 
 
 @property (nonatomic, assign) int startingPrice;
@@ -67,15 +71,19 @@
 @property (nonatomic, assign) float netGainLoss;
 @property (nonatomic, assign) float shortPrice;
 @property (nonatomic, assign) float shortPriceCoordinate;
+@property (nonatomic, assign) float forwardPositionInitialized;
+@property (nonatomic, assign) float forwardPositionActual;
 @property (nonatomic, assign) float predictedPriceCoordinate;
+@property (nonatomic, assign) float forwardPositionInitializedCoordinate;
 
 @property (nonatomic, assign) float maxNumberOfShares;
 @property (nonatomic, assign) float numberOfShares;
 @property (nonatomic, assign) float cash;
 @property (nonatomic, assign) float holdingValue;
 
-@property (nonatomic, assign) BOOL bought;
+@property (nonatomic, assign) BOOL boughtEnabled;
 @property (nonatomic, assign) BOOL shortingEnabled;
+@property (nonatomic, assign) BOOL forwardEnabled;
 
 @end
 
@@ -115,6 +123,7 @@ static const float kPredictedPriceTime = 90;
     self.maxNumberOfShares = self.cash/self.currentPrice;
     
 #pragma mark indicators
+    self.boughtEnabled = NO;
     self.shortingEnabled = NO;
     
 #pragma mark music
@@ -137,11 +146,6 @@ static const float kPredictedPriceTime = 90;
     
     self.shortSellPremiumLabel = [[UILabel alloc]init];
     self.shortSellPremiumLabel.backgroundColor = [UIColor colorWithRed:146.0 green:230.0 blue:0.0/255.0 alpha:0.6];
-
-//    [self.scrollView addSubview:self.shortSellPremiumLabel];
-//    [UIView animateWithDuration:10 animations:^{
-//        self.shortSellPremiumLabel.frame = CGRectMake(0, self.currentPrice, CGRectGetWidth(self.graphTool.frame) - self.timeIndex, 20);
-//    }];
     
 #pragma mark label
     
@@ -149,6 +153,10 @@ static const float kPredictedPriceTime = 90;
     self.stateLabel.text = @"WATCHING";
     self.stateLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:42];
     self.stateLabel.alpha = 0.2;
+    
+    self.derivativesDetail = [[UILabel alloc]init];
+    self.derivativesDetail.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:28];
+    self.derivativesDetail.alpha = 0.15;
     
     self.analysisButton = [[UIButton alloc]init];
     self.analysisButton.titleLabel.text = @"Stock Analysis";
@@ -203,18 +211,17 @@ static const float kPredictedPriceTime = 90;
     self.firstInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -80, 100, CGRectGetHeight(self.graphTool.frame))];
     self.firstInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:24];
     self.firstInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:100.0/255.0 blue:0.0/255.0 alpha:0.5];
-    //self.firstInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.boughtPrice];
     
     self.secondInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -90, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
     self.secondInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:24];
     self.secondInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:50/255.0 blue:0.0/255.0 alpha:0.5];
-    //self.secondInfoLabel.text = [NSString stringWithFormat:@"-$%0.2f", self.currentPrice];
     
     self.thirdInfoLabel = [[UILabel alloc]initWithFrame:CGRectMake(420, -120, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame))];
     self.thirdInfoLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Regular") size:28];
     self.thirdInfoLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:140.0/255.0 alpha:0.6];
-    //self.thirdInfoLabel.text = [NSString stringWithFormat:@" $%0.2f", self.netGainLoss];
     
+    self.forwardPositionIndicator = [[UIImageView alloc]initWithFrame:CGRectZero];
+
     self.shareSlider = [[UISlider alloc]init];
     CGAffineTransform trans = CGAffineTransformMakeRotation(M_PI * 1.5);
     self.shareSlider.transform = trans;
@@ -243,8 +250,12 @@ static const float kPredictedPriceTime = 90;
     [self.shortSell setNumberOfTapsRequired:2];
     self.shortSell.enabled = NO;
     
-
-
+    self.initiateForward = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(forwardPositionActionInitiated:)];
+    self.initiateForward.delaysTouchesBegan = YES;
+    self.initiateForward.minimumPressDuration = 0.5;
+    self.initiateForward.enabled = YES;
+    
+    
 #pragma mark addingViews
     self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -275,6 +286,7 @@ static const float kPredictedPriceTime = 90;
     [self.scrollView addGestureRecognizer:self.sell];
     [self.scrollView addGestureRecognizer:self.initiateShortSelling];
     [self.scrollView addGestureRecognizer:self.shortSell];
+    [self.scrollView addGestureRecognizer:self.initiateForward];
     [self.scrollView addSubview:self.stateLabel];
     [self.scrollView addSubview:self.infoTextLabel];
     [self.scrollView addSubview:self.infoNumberLabel];
@@ -290,6 +302,7 @@ static const float kPredictedPriceTime = 90;
     [self.scrollView addSubview:self.analysisLabel];
     [self.scrollView addSubview:self.backButton];
     [self.scrollView addSubview:self.backLabel];
+    [self.scrollView addSubview:self.derivativesDetail];
     
 #pragma mark constraints
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
@@ -319,7 +332,7 @@ static const float kPredictedPriceTime = 90;
     [UIView animateWithDuration:1.5 animations:^{
         point.frame = CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5);
         point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
-
+        
     }];
     
     [self.scrollView addSubview:point];
@@ -343,7 +356,7 @@ static const float kPredictedPriceTime = 90;
     
     self.analysisButton.frame = CGRectMake(self.timeIndex -599, 489, 600, 20);
     self.analysisLabel.frame = CGRectMake(self.timeIndex - 100, 98, 100, CGRectGetHeight(self.graphTool.frame));
-
+    
     self.backButton.frame = CGRectMake(self.timeIndex -599, 632, 600, 30);
     self.backLabel.frame = CGRectMake(((self.timeIndex - 100) - (self.timeIndex * 0.50)), 248, 100, CGRectGetHeight(self.graphTool.frame));
     
@@ -368,12 +381,9 @@ static const float kPredictedPriceTime = 90;
     
     
     if (self.shortingEnabled) {
-    self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/20.0));
+        self.shortSellPremiumLabel.frame = CGRectMake(0, self.shortPriceCoordinate + (1.0 + self.currentPrice)/10.0, self.timeIndex, 1.0 + (self.currentPrice/20.0));
     }
-
-
-    //    NSLog(@"Time:%d, %f, $%0.2f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice);
-//    NSLog(@"PriceCoordinate: %f", self.currentPriceCoordinate);
+    //    NSLog(@"Time:%d, %f, Price: $%0.2f, %f" ,self.timeIndex, self.displaylink.timestamp - self.startTime, self.currentPrice, self.currentPriceCoordinate);
 }
 
 - (void)buyAction:(UITapGestureRecognizer *)sender {
@@ -393,7 +403,8 @@ static const float kPredictedPriceTime = 90;
         buyPositionAnimationView.frame = CGRectMake(self.timeIndex-25, self.currentPriceCoordinate-25, 50, 50);
         buyPositionAnimationView.alpha = 0.0;
     }];
-
+    
+    self.boughtEnabled = YES;
     self.buy.enabled = NO;
     self.sell.enabled = YES;
     self.stateLabel.text = [NSString stringWithFormat:@"BOUGHT@$%0.2f",self.boughtPrice];
@@ -410,8 +421,7 @@ static const float kPredictedPriceTime = 90;
 - (void)sellAction:(UITapGestureRecognizer *)sender {
     self.netGainLoss =  -(self.boughtPrice - self.currentPrice);
     self.cash += self.netGainLoss * self.numberOfShares;
-    
-//    NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
+    //    NSLog(@"%f, %d, Sold At: $%f, Net: %0.2f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice, self.netGainLoss);
     
     self.stateLabel.text = [NSString stringWithFormat:@"WATCHING"];
     self.stateLabel.alpha = 0;
@@ -449,9 +459,10 @@ static const float kPredictedPriceTime = 90;
         }];
     }];
     
+    self.boughtEnabled = NO;
     self.sell.enabled = NO;
     self.buy.enabled = YES;
-
+    
 }
 - (void)shortSellingActionInitiated:(UITapGestureRecognizer *)sender {
     self.shortPrice = self.currentPrice;
@@ -471,8 +482,7 @@ static const float kPredictedPriceTime = 90;
         shortPositionAnimationView.frame = CGRectMake(self.timeIndex-25, self.currentPriceCoordinate-25, 50, 50);
         shortPositionAnimationView.alpha = 0.0;
     }];
-    
-//    NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
+    //    NSLog(@"%f, %d, Short At: $%f", CACurrentMediaTime() - self.startTime, self.timeIndex, self.currentPrice);
     
     self.initiateShortSelling.enabled = NO;
     self.shortSell.enabled = YES;
@@ -534,19 +544,68 @@ static const float kPredictedPriceTime = 90;
     }];
     
 }
-- (void)adjustShares: (UISlider *)sliderValue {
-    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-    sliderValue.value = self.numberOfShares;
-    self.holdingsLabel.text = [NSString stringWithFormat:@"$%f", self.holdingValue];
-    self.shareLabel.text = [NSString stringWithFormat:@"%f", self.numberOfShares];
-    });
+- (void)forwardPositionActionInitiated:(UILongPressGestureRecognizer *)sender {
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        return;
+    }
+    
+    CGPoint p = [sender locationInView:self.scrollView];
+    if (p.x >= self.timeIndex) {
+        Coordinate *fpc = [self.graphTool.arrayOfCoordinates objectAtIndex:p.x];
+        self.forwardPositionInitialized = (1000 - p.y)/20;
+        self.forwardPositionInitializedCoordinate = p.y;
+        self.forwardPositionActual = [(fpc.price)floatValue];
+        NSLog(@"forward: %f, $%0.2f, $%0.2f", p.x, self.forwardPositionInitialized, self.forwardPositionActual);
+        
+        self.forwardPositionIndicator.frame = CGRectMake(p.x - 10, p.y - 105, 20, 20);
+        self.forwardPositionIndicator.contentMode = UIViewContentModeScaleAspectFit;
+        self.forwardPositionIndicator.image = [UIImage imageNamed:@"FowardPositionIndicator"];
+        self.forwardPositionIndicator.alpha = 0.6;
+        [self.scrollView addSubview:self.forwardPositionIndicator];
+        [UIView animateWithDuration:0.5 animations:^{
+            self.forwardPositionIndicator.frame = CGRectMake(p.x - 5, p.y - 5, 20, 20);
+        }];
+        
+        UIImageView *forwardPositionAnimationView = [[UIImageView alloc]initWithFrame:CGRectMake(p.x - 10, p.y - 20, 20, 20)];
+        forwardPositionAnimationView.image = [UIImage imageNamed:@"FowardPositionIndicator"];
+        forwardPositionAnimationView.alpha = 0.5;
+        [self.scrollView addSubview:forwardPositionAnimationView];
+        [UIView animateWithDuration:1.5 animations:^{
+            forwardPositionAnimationView.frame = CGRectMake(p.x - 25, p.y - 25, 50, 50);
+            forwardPositionAnimationView.alpha = 0.0;
+        }];
+    }
+    
+    self.initiateForward.enabled = NO;
+    self.shortSell.enabled = YES;
+    self.buy.enabled = NO;
+    
+    self.derivativesDetail.frame = CGRectMake(1, 50, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+
+    self.derivativesDetail.text = [NSString stringWithFormat:@"SHORTED@$%0.2f",self.shortPrice];
+    self.derivativesDetail.alpha = 0;
+    self.derivativesDetail.textColor = [UIColor colorWithRed:192.0/255.0 green:14.0/255.0 blue:14.0/255.0 alpha:1.0];
+    
+    [UIView animateWithDuration:kUITransitionTime animations:^{
+        self.stateLabel.alpha = 0.2;
+    }];
+    
 }
 
-- (void)endGame {
-    [self.delegate storeCash:self.cash];
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [self.backgroundMusicPlayer pause];
-//    NSLog(@"Ended");
+- (void)cancelForward {
+    [self.derivativesDetail removeFromSuperview];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (void)adjustShares: (UISlider *)sliderValue {
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        sliderValue.value = self.numberOfShares;
+        self.holdingsLabel.text = [NSString stringWithFormat:@"$%f", self.holdingValue];
+        self.shareLabel.text = [NSString stringWithFormat:@"%f", self.numberOfShares];
+    });
 }
 
 - (void)runAnalysis {
@@ -577,6 +636,13 @@ static const float kPredictedPriceTime = 90;
             self.thirdInfoLabel.alpha = 0.0;
         }];
     }];
+}
+
+- (void)endGame {
+    [self.delegate storeCash:self.cash];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.backgroundMusicPlayer pause];
+    //    NSLog(@"Ended");
 }
 
 -(BOOL)shouldAutorotate

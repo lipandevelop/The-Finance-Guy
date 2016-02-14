@@ -20,6 +20,7 @@
 		0A18402A1C692D1400FDAF13 /* Stock.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840291C692D1400FDAF13 /* Stock.m */; };
 		0A1840391C696C3300FDAF13 /* Coordinate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A1840381C696C3300FDAF13 /* Coordinate.m */; };
 		0A18403B1C69A71900FDAF13 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A18403A1C69A71900FDAF13 /* QuartzCore.framework */; };
+		0A2546F21C701F01008C43DF /* FowardPositionIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A2546F11C701F01008C43DF /* FowardPositionIndicator.png */; };
 		0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */ = {isa = PBXBuildFile; fileRef = 0A5578001C6BED7200361B27 /* OpenSceen3.gif */; };
 		0A5578061C6BEDAE00361B27 /* OpeningScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A5578051C6BEDAE00361B27 /* OpeningScreen.m */; };
 		0A55780A1C6C211200361B27 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A5578091C6C211200361B27 /* AudioToolbox.framework */; };
@@ -51,6 +52,7 @@
 		0A1840371C696C3300FDAF13 /* Coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinate.h; sourceTree = "<group>"; };
 		0A1840381C696C3300FDAF13 /* Coordinate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Coordinate.m; sourceTree = "<group>"; };
 		0A18403A1C69A71900FDAF13 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		0A2546F11C701F01008C43DF /* FowardPositionIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FowardPositionIndicator.png; sourceTree = "<group>"; };
 		0A5578001C6BED7200361B27 /* OpenSceen3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = OpenSceen3.gif; sourceTree = "<group>"; };
 		0A5578041C6BEDAE00361B27 /* OpeningScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpeningScreen.h; sourceTree = "<group>"; };
 		0A5578051C6BEDAE00361B27 /* OpeningScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpeningScreen.m; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 		0A5577FF1C6BED1000361B27 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				0A2546F11C701F01008C43DF /* FowardPositionIndicator.png */,
 				0A176DF71C6F10E2003C766B /* Movement.mp3 */,
 				0A176DF51C6F106B003C766B /* MovementMelo.mp3 */,
 				0AF25CB11C6D77FE00D63A98 /* BuyPositionIndicator2.png */,
@@ -217,6 +220,7 @@
 				0A5578021C6BED7200361B27 /* OpenSceen3.gif in Resources */,
 				0A18401B1C6929B400FDAF13 /* Assets.xcassets in Resources */,
 				0A176DE81C6E598C003C766B /* PredictedPriceIndicator.png in Resources */,
+				0A2546F21C701F01008C43DF /* FowardPositionIndicator.png in Resources */,
 				0A1840161C6929B400FDAF13 /* Main.storyboard in Resources */,
 				0AF25CB61C6D7B2100D63A98 /* ShortSellIndicator2.png in Resources */,
 				0AF25CAB1C6D318800D63A98 /* ShortPositionIndicator copy.png in Resources */,
