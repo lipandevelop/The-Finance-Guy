@@ -37,7 +37,7 @@
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UILabel *analysisLabel;
 @property (nonatomic, strong) UILabel *backLabel;
-
+@property (nonatomic, strong) UILabel *moneyBackgroundLabel;
 
 @property (nonatomic, strong) UILabel *firstBlock;
 @property (nonatomic, strong) UILabel *pointBlock;
@@ -114,9 +114,9 @@ static const float kPredictedPriceTime = 90;
     
 #pragma mark graph
     self.view.backgroundColor = self.stateColor;
-    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 400, 600)];
+    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.scrollView setContentOffset:CGPointMake(0, self.graphTool.startingPrice)];
+//    [self.scrollView setContentOffset:CGPointMake(0, self.graphTool.startingPrice)];
     self.graphTool = [[GraphTool alloc] initWithFrame:CGRectMake(0, 0, 700, 800)];
     self.graphTool.backgroundColor = self.stateColor;
     self.scrollView.backgroundColor = self.stateColor;
@@ -197,8 +197,12 @@ static const float kPredictedPriceTime = 90;
     
     self.moneyLabel = [[UILabel alloc]init];
     self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f",self.cash];
-    self.moneyLabel.textColor = [UIColor colorWithRed:200.0/255.0 green:0.0/255.0 blue:140.0/255.0 alpha:0.4];
+    self.moneyLabel.textColor = [UIColor colorWithRed:255.0/255.0 green:200.0/255.0 blue:0.0/255.0 alpha:1.0];
     self.moneyLabel.font = [UIFont fontWithName:(@"AvenirNextCondensed-Heavy") size:36];
+    self.moneyBackgroundLabel = [[UILabel alloc]init];
+    self.moneyBackgroundLabel.backgroundColor = [UIColor blackColor];
+    self.moneyBackgroundLabel.alpha = 0.45;
+    
     
     self.infoTextLabel = [[UILabel alloc]init];
     self.infoTextLabel.text = @"Current Price $\nVolitility";
@@ -289,6 +293,7 @@ static const float kPredictedPriceTime = 90;
     [self.scrollView addSubview:self.infoTextLabel];
     [self.scrollView addSubview:self.infoNumberLabel];
     [self.scrollView addSubview:self.moneyLabel];
+    [self.scrollView addSubview:self.moneyBackgroundLabel];
     [self.scrollView addSubview:self.shareLabel];
     [self.scrollView addSubview:self.holdingsLabel];
     [self.scrollView addSubview:self.shareSlider];
@@ -303,13 +308,13 @@ static const float kPredictedPriceTime = 90;
     [self.scrollView addSubview:self.derivativesDetail];
 
 #pragma mark constraints
-//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
-//    
-//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
-//    
-//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
-//    
-//    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1000]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1000]];
 }
 
 #pragma mark methods
@@ -326,7 +331,6 @@ static const float kPredictedPriceTime = 90;
 - (void)update {
     UILabel *point = [[UILabel alloc]initWithFrame:CGRectMake(self.timeIndex, self.currentPriceCoordinate - 25, 15.0, 50.0)];
     point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.0];
-    point.backgroundColor = [UIColor colorWithRed:180.0/255.0 green:10.0/255.0 blue:0.0 alpha:0.0];
     [UIView animateWithDuration:1.5 animations:^{
         point.frame = CGRectMake(self.timeIndex, self.currentPriceCoordinate, 3.0, 4.5);
         point.backgroundColor = [UIColor colorWithRed:(150.0 + (self.currentPrice * 2.0))/255.0 green:10.0/255.0 blue:0.0 alpha:0.4];
@@ -377,10 +381,12 @@ static const float kPredictedPriceTime = 90;
     self.holdingsLabel.frame = CGRectMake(self.timeIndex, 172, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
     
     self.moneyLabel.frame = CGRectMake(self.timeIndex, 202, CGRectGetWidth(self.graphTool.frame), CGRectGetHeight(self.graphTool.frame));
+    self.moneyBackgroundLabel.frame = CGRectMake(self.timeIndex, 585, CGRectGetWidth(self.graphTool.frame), 33);
     
     self.shareLabel.text = [NSString stringWithFormat:@"%0.2f", self.shareSlider.value];
     self.holdingsLabel.text = [NSString stringWithFormat:@"$%0.2f", self.shareSlider.value * self.currentPrice];
     self.moneyLabel.text = [NSString stringWithFormat:@"$%0.2f", self.cash];
+    [self.scrollView bringSubviewToFront:self.moneyLabel];
 //    if (self.timeIndex == self.forwardPositionInitializedTime) {
 //        [self cashForward];
 //    }
@@ -510,7 +516,6 @@ static const float kPredictedPriceTime = 90;
     if (sender.state == UIGestureRecognizerStateBegan) {
         return;
     }
-    
     CGPoint p = [sender locationInView:self.scrollView];
     if (p.x >= self.timeIndex) {
         Coordinate *fpc = [self.graphTool.arrayOfCoordinates objectAtIndex:p.x];
@@ -578,6 +583,7 @@ static const float kPredictedPriceTime = 90;
         self.derivativesDetail.alpha = 0.0;
 
     }];
+    [self.forwardPositionIndicator removeFromSuperview];
     
 }
 

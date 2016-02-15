@@ -39,9 +39,7 @@
 
 - (void) loadContent {
     self.fundsAvailable = 100000;
-    
 
-    
     self.view.backgroundColor = [UIColor blackColor];
     //    self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 120, CGRectGetWidth(self.view.frame), 500)];
     self.scrollView = [[UIScrollView alloc]initWithFrame:CGRectZero];
